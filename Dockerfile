@@ -1,4 +1,4 @@
-FROM dockerfile/java:oracle-java7
+FROM jdgoldie/jdk7
 
 EXPOSE 8080
 
