@@ -1,0 +1,19 @@
+FROM coolersport/alpine-java:8u162b12_jdk_unlimited
+
+MAINTAINER Tien Tran
+
+RUN apk --no-cache add tar curl tzdata && \
+    curl -fsSL http://central.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.8.v20171121/jetty-distribution-9.4.8.v20171121.tar.gz -o /opt/jetty.tar.gz && \
+    tar -xvf /opt/jetty.tar.gz -C /opt/ && \
+    rm -rf /opt/jetty.tar.gz && \
+    mv /opt/jetty-distribution-* /opt/jetty && \
+    rm -rf /opt/jetty/demo-base && \
+    chown -R alpine:alpine /opt/jetty && \
+    apk del tar curl && \
+    rm -rf /apk /tmp/* /var/cache/apk/*
+
+WORKDIR /opt/jetty
+
+EXPOSE 8080
+
+CMD ["gosu", "alpine", "bash", "-c", "java -jar start.jar jetty.home=$PWD"]
