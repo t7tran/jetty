@@ -1,4 +1,4 @@
-FROM coolersport/alpine-java:8u162b12_server-jre_unlimited-2
+FROM coolersport/alpine-java:8u162b12_server-jre_unlimited-3
 
 MAINTAINER Tien Tran
 
