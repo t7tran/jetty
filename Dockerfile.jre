@@ -1,15 +1,17 @@
-FROM coolersport/alpine-java:8u172b11_server-jre_unlimited
+FROM coolersport/alpine-java:8u191b12_server-jre_unlimited
 
 MAINTAINER Tien Tran
 
 RUN apk --no-cache add tar curl tzdata && \
-    curl -fsSL http://central.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.10.v20180503/jetty-distribution-9.4.10.v20180503.tar.gz -o /opt/jetty.tar.gz && \
+    curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.12.v20180830/jetty-distribution-9.4.12.v20180830.tar.gz -o /opt/jetty.tar.gz && \
     tar -xvf /opt/jetty.tar.gz -C /opt/ && \
     rm -rf /opt/jetty.tar.gz && \
     mv /opt/jetty-distribution-* /opt/jetty && \
     rm -rf /opt/jetty/demo-base && \
     # fix gibberish in module file
     sed -i 's|jar.*$|jar|g' /opt/jetty/modules/gcloud-datastore.mod && \
+    # disable directory listing
+    sed -in '$!N;s@dirAllowed.*\n.*true@dirAllowed</param-name><param-value>false@;P;D' /opt/jetty/etc/webdefault.xml && \
     # fix maven urls resolved to outdated central.maven.org
     for f in `ls -1 /opt/jetty/modules/*.mod`; do \
       for u in `grep -oE 'maven://[^|]+' $f`; do \
