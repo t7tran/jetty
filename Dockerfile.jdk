@@ -30,6 +30,11 @@ RUN apk --no-cache add tar curl tzdata && \
     for f in `grep -l configurationLocation /opt/jetty/modules/*`; do \
       sed -i 's|^#jetty.session.hazelcast.configurationLocation=$|jetty.session.hazelcast.configurationLocation=/opt/jetty/etc/sessions/hazelcast/server-default.xml|g' $f; \
     done && \
+    # add hazelcast kubernetes discovery plugin
+    # https://github.com/hazelcast/hazelcast-kubernetes
+    # TODO upgrade to 1.3+ once hazelcast 3.11+ is used
+    sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/1.2.2/hazelcast-kubernetes-1.2.2.jar|lib/hazelcast/hazelcast-kubernetes-1.2.2.jar' /opt/jetty/modules/session-store-hazelcast-embedded.mod && \
+    sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/1.2.2/hazelcast-kubernetes-1.2.2.jar|lib/hazelcast/hazelcast-kubernetes-1.2.2.jar' /opt/jetty/modules/session-store-hazelcast-remote.mod && \
     # finalise and cleanup
     chown -R alpine:alpine /opt/jetty && \
     apk del tar curl && \
