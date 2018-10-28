@@ -23,6 +23,14 @@ RUN apk --no-cache add tar curl tzdata && \
         sed -i $regex $f;\
       done \
     done && \
+    # patch session-store-hazelcast configurations
+    sed -i 's|</New>|<Set name="configurationLocation"><Property name="jetty.session.hazelcast.configurationLocation" /></Set></New>|g' ../etc/sessions/hazelcast/default.xml && \
+    sed -i 's|</New>|<Set name="configurationLocation"><Property name="jetty.session.hazelcast.configurationLocation" /></Set></New>|g' ../etc/sessions/hazelcast/remote.xml && \
+    echo '<?xml version="1.0" encoding="UTF-8"?><hazelcast />' > /opt/jetty/etc/sessions/hazelcast/server-default.xml && \
+    for f in `grep -l configurationLocation /opt/jetty/modules/*`; do \
+      sed -i 's|^#jetty.session.hazelcast.configurationLocation=$|jetty.session.hazelcast.configurationLocation=/opt/jetty/etc/sessions/hazelcast/server-default.xml|g' $f; \
+    done && \
+    # finalise and cleanup
     chown -R alpine:alpine /opt/jetty && \
     apk del tar curl && \
     rm -rf /apk /tmp/* /var/cache/apk/*
