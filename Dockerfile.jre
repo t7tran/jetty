@@ -31,8 +31,12 @@ RUN apk --no-cache add tar curl tzdata && \
     sed -i 's|</New>|<Set name="configurationLocation"><Property name="jetty.session.hazelcast.configurationLocation" /></Set></New>|g' /opt/jetty/etc/sessions/hazelcast/default.xml && \
     sed -i 's|</New>|<Set name="configurationLocation"><Property name="jetty.session.hazelcast.configurationLocation" /></Set></New>|g' /opt/jetty/etc/sessions/hazelcast/remote.xml && \
     echo '<?xml version="1.0" encoding="UTF-8"?><hazelcast />' > /opt/jetty/etc/sessions/hazelcast/server-default.xml && \
-    for f in `grep -l 'jetty.session.hazelcast.configurationLocation' /opt/jetty/modules/*`; do \
+    echo '<?xml version="1.0" encoding="UTF-8"?><hazelcast-client />' > /opt/jetty/etc/sessions/hazelcast/client-default.xml && \
+    for f in `grep -l 'jetty.session.hazelcast.configurationLocation' /opt/jetty/modules/*embedded*`; do \
       sed -i 's|^#jetty.session.hazelcast.configurationLocation=$|jetty.session.hazelcast.configurationLocation=/opt/jetty/etc/sessions/hazelcast/server-default.xml|g' $f; \
+    done && \
+    for f in `grep -l 'jetty.session.hazelcast.configurationLocation' /opt/jetty/modules/*remote*`; do \
+      sed -i 's|^#jetty.session.hazelcast.configurationLocation=$|jetty.session.hazelcast.configurationLocation=/opt/jetty/etc/sessions/hazelcast/client-default.xml|g' $f; \
     done && \
     #
     # add hazelcast kubernetes discovery plugin
