@@ -42,8 +42,10 @@ RUN apk --no-cache add tar curl tzdata && \
     # add hazelcast kubernetes discovery plugin
     # https://github.com/hazelcast/hazelcast-kubernetes
     # TODO upgrade to 1.3+ once hazelcast 3.11+ is used
-    sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/1.2.2/hazelcast-kubernetes-1.2.2.jar|lib/hazelcast/hazelcast-kubernetes-1.2.2.jar' /opt/jetty/modules/session-store-hazelcast-embedded.mod && \
-    sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/1.2.2/hazelcast-kubernetes-1.2.2.jar|lib/hazelcast/hazelcast-kubernetes-1.2.2.jar' /opt/jetty/modules/session-store-hazelcast-remote.mod && \
+    for f in /opt/jetty/modules/session-store-hazelcast-*.mod; do \
+      sed -ie '/hazelcast-[0-9.]\+.jar/a\\http://repo1.maven.org/maven2/dnsjava/dnsjava/2.1.8/dnsjava-2.1.8.jar|lib/hazelcast/dnsjava-2.1.8.jar' $f; \
+      sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/1.2.2/hazelcast-kubernetes-1.2.2.jar|lib/hazelcast/hazelcast-kubernetes-1.2.2.jar' $f; \
+    done && \
     #
     # set all modules' properties under ini-template section to be overridable by system properties
     # see syntax under Module Properties section at https://www.eclipse.org/jetty/documentation/9.4.x/custom-modules.html
