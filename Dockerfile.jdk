@@ -3,7 +3,7 @@ FROM coolersport/alpine-java:8u191b12_jdk_unlimited
 MAINTAINER Tien Tran
 
 RUN apk --no-cache add tar curl tzdata && \
-    curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.12.v20180830/jetty-distribution-9.4.12.v20180830.tar.gz -o /opt/jetty.tar.gz && \
+    curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.14.v20181114/jetty-distribution-9.4.14.v20181114.tar.gz -o /opt/jetty.tar.gz && \
     tar -xvf /opt/jetty.tar.gz -C /opt/ && \
     rm -rf /opt/jetty.tar.gz && \
     mv /opt/jetty-distribution-* /opt/jetty && \
