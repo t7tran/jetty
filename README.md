@@ -1,4 +1,4 @@
 docker-jetty
 ============
 
-Dockerfile with latest oracle jdk 8 and jetty 9
+Dockerfile with latest OpenJDK 8 and Jetty 9

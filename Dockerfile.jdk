@@ -1,10 +1,27 @@
-FROM coolersport/alpine-java:8u191b12_jdk_unlimited
+FROM openjdk:8-jdk-alpine
 
 MAINTAINER Tien Tran
 
-# issue with version 9.4.14.v20181114, see https://github.com/eclipse/jetty.project/issues/3175
-RUN apk --no-cache add tar curl tzdata && \
-    curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.12.v20180830/jetty-distribution-9.4.12.v20180830.tar.gz -o /opt/jetty.tar.gz && \
+ENV TZ=Australia/Melbourne \
+    STORE_PASS=changme \
+    KEY_PASS=changme \
+    WAITFOR_HOST= \
+    WAITFOR_PORT= \
+    TIMEOUT=120
+
+COPY rootfs /
+
+RUN addgroup alpine && adduser -S -D -G alpine alpine && \
+    apk --no-cache add bash tar tzdata curl dpkg openssl && \
+    # install gosu
+    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
+    curl -fsSL "https://github.com/tianon/gosu/releases/download/1.10/gosu-$dpkgArch" -o /usr/local/bin/gosu && \
+    chmod +x /usr/local/bin/gosu && \
+    gosu nobody true && \
+    # complete gosu
+    chmod u+x entrypoint.sh && \
+    # download and configure jetty
+    curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.19.v20190610/jetty-distribution-9.4.19.v20190610.tar.gz -o /opt/jetty.tar.gz && \
     tar -xvf /opt/jetty.tar.gz -C /opt/ && \
     rm -rf /opt/jetty.tar.gz && \
     mv /opt/jetty-distribution-* /opt/jetty && \
@@ -31,8 +48,6 @@ RUN apk --no-cache add tar curl tzdata && \
     # patch session-store-hazelcast configurations
     sed -i 's|</New>|<Set name="configurationLocation"><Property name="jetty.session.hazelcast.configurationLocation" /></Set></New>|g' /opt/jetty/etc/sessions/hazelcast/default.xml && \
     sed -i 's|</New>|<Set name="configurationLocation"><Property name="jetty.session.hazelcast.configurationLocation" /></Set></New>|g' /opt/jetty/etc/sessions/hazelcast/remote.xml && \
-    echo '<?xml version="1.0" encoding="UTF-8"?><hazelcast />' > /opt/jetty/etc/sessions/hazelcast/server-default.xml && \
-    echo '<?xml version="1.0" encoding="UTF-8"?><hazelcast-client />' > /opt/jetty/etc/sessions/hazelcast/client-default.xml && \
     for f in `grep -l 'jetty.session.hazelcast.configurationLocation' /opt/jetty/modules/*embedded*`; do \
       sed -i 's|^#jetty.session.hazelcast.configurationLocation=$|jetty.session.hazelcast.configurationLocation=/opt/jetty/etc/sessions/hazelcast/server-default.xml|g' $f; \
     done && \
@@ -61,11 +76,12 @@ RUN apk --no-cache add tar curl tzdata && \
     for m in /opt/jetty/modules/*.mod; do sed -i '/ini-template/,${s/^\([^#][^=]\+[^?]\)=/\1?=/}' $m; done && \
     # finalise and cleanup
     chown -R alpine:alpine /opt/jetty && \
-    apk del tar curl && \
+    apk del tar curl dpkg && \
     rm -rf /apk /tmp/* /var/cache/apk/*
 
 WORKDIR /opt/jetty
 
 EXPOSE 8080
 
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["gosu", "alpine", "bash", "-c", "java -jar start.jar jetty.home=$PWD"]
