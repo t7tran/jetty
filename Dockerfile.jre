@@ -62,12 +62,12 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     done && \
     # upgrade hazelcast
     for m in `grep -l hazelcast /opt/jetty/modules/*`; do \
-      sed -i 's;/hazelcast/[0-9.]\+/;/hazelcast/3.11.1/;g' $m; \
-      sed -i 's;/hazelcast-[0-9.]\+.jar;/hazelcast-3.11.1.jar;g' $m; \
-      sed -i 's;/hazelcast-client/[0-9.]\+/;/hazelcast-client/3.11.1/;g' $m; \
-      sed -i 's;/hazelcast-client-[0-9.]\+.jar;/hazelcast-client-3.11.1.jar;g' $m; \
-      sed -i 's;/hazelcast-all/[0-9.]\+/;/hazelcast-all/3.11.1/;g' $m; \
-      sed -i 's;/hazelcast-all-[0-9.]\+.jar;/hazelcast-all-3.11.1.jar;g' $m; \
+      sed -i 's;/hazelcast/[0-9.]\+/;/hazelcast/3.12.1/;g' $m; \
+      sed -i 's;/hazelcast-[0-9.]\+.jar;/hazelcast-3.12.1.jar;g' $m; \
+      sed -i 's;/hazelcast-client/[0-9.]\+/;/hazelcast-client/3.12.1/;g' $m; \
+      sed -i 's;/hazelcast-client-[0-9.]\+.jar;/hazelcast-client-3.12.1.jar;g' $m; \
+      sed -i 's;/hazelcast-all/[0-9.]\+/;/hazelcast-all/3.12.1/;g' $m; \
+      sed -i 's;/hazelcast-all-[0-9.]\+.jar;/hazelcast-all-3.12.1.jar;g' $m; \
     done && \
     #
     # set all modules' properties under ini-template section to be overridable by system properties
