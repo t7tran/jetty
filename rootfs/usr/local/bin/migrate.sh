@@ -131,7 +131,7 @@ else
 	if [[ "$firstChangesetId" == "0" ]]; then
 		firstChangesetId=$(changeSetIds.sh $changeSetDir | sort -V | head -1)
 	fi
-	for cs in `changeSetIds.sh /opt/jetty/protrack/migration/ | sort -V | sed -ne "/^$firstChangesetId\$/,/^$applyingChangeSetId\$/ p" | grep -v "^$dbMaxChangesetId\$"`; do
+	for cs in `changeSetIds.sh $changeSetDir | sort -V | sed -ne "/^$firstChangesetId\$/,/^$applyingChangeSetId\$/ p" | grep -v "^$dbMaxChangesetId\$"`; do
 	    update $cs
 	done
 fi
