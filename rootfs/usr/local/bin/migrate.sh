@@ -14,7 +14,6 @@ if [[ -n "$LIQUIBASE_MYSQL_VER" && -f /opt/liquibase/mysql-connector-java-$LIQUI
 	mv /opt/liquibase/mysql-connector-java-$LIQUIBASE_MYSQL_VER.jar /opt/liquibase/lib/
 fi
 
-JAVA_OPTS=-Duser.timezone=GMT
 dbDriver="com.mysql.cj.jdbc.Driver"
 dbUrl="jdbc:mysql://${LIQUIBASE_DB_HOST?}/${LIQUIBASE_DB_NAME?}?${LIQUIBASE_DB_OPTIONS}"
 
