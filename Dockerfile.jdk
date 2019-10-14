@@ -73,6 +73,10 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     # set all modules' properties under ini-template section to be overridable by system properties
     # see syntax under Module Properties section at https://www.eclipse.org/jetty/documentation/9.4.x/custom-modules.html
     for m in /opt/jetty/modules/*.mod; do sed -i '/ini-template/,${s/^\([^#][^=]\+[^?]\)=/\1?=/}' $m; done && \
+    #
+    # change default values of deploy module's properties
+    sed -i 's/name="jetty.deploy.scanInterval" default="1"/name="jetty.deploy.scanInterval" default="0"/g' /opt/jetty/etc/jetty-deploy.xml && \
+    sed -i 's/name="jetty.deploy.extractWars" default="true"/name="jetty.deploy.extractWars" default="false"/g' /opt/jetty/etc/jetty-deploy.xml && \
 # setup liquibase
     apk add --no-cache mariadb-connector-c-dev mysql-client xmlstarlet && \
     wget https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.8.0/liquibase-3.8.0-bin.tar.gz -O /tmp/liquibase.tar.gz && \
