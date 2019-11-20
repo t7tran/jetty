@@ -14,7 +14,6 @@ if [[ -n "$LIQUIBASE_MYSQL_VER" && -f /opt/liquibase/mysql-connector-java-$LIQUI
 	mv /opt/liquibase/mysql-connector-java-$LIQUIBASE_MYSQL_VER.jar /opt/liquibase/lib/
 fi
 
-dbDriver="com.mysql.cj.jdbc.Driver"
 dbUrl="jdbc:mysql://${LIQUIBASE_DB_HOST?}/${LIQUIBASE_DB_NAME?}?${LIQUIBASE_DB_OPTIONS}"
 
 # changeset ids validation
@@ -89,7 +88,7 @@ newerChangeset() {
 }
 
 # Perform migration update or rollback
-liquibaseCommand="liquibase --driver=$dbDriver --url=$dbUrl --username=${LIQUIBASE_DB_USERNAME?} --password=${LIQUIBASE_DB_PASSWORD?} --changeLogFile=$masterFileLocation"
+liquibaseCommand="liquibase --driver=${LIQUIBASE_DB_DRIVER?} --url=$dbUrl --username=${LIQUIBASE_DB_USERNAME?} --password=${LIQUIBASE_DB_PASSWORD?} --changeLogFile=$masterFileLocation"
 logFilter() { 
 	grep -vE 'Starting|built|Datical|tagged'
 }
