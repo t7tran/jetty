@@ -134,3 +134,7 @@ else
 	    update $cs
 	done
 fi
+
+if [[ -n "$KEEP_RUNNING" ]]; then
+	trap : TERM INT; tail -f /dev/null & wait
+fi
