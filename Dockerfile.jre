@@ -15,13 +15,13 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     apk --no-cache add coreutils bash tar tzdata curl dpkg openssl && \
 # install gosu
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
-    curl -fsSL "https://github.com/tianon/gosu/releases/download/1.10/gosu-$dpkgArch" -o /usr/local/bin/gosu && \
+    curl -fsSL "https://github.com/tianon/gosu/releases/download/1.11/gosu-$dpkgArch" -o /usr/local/bin/gosu && \
     chmod +x /usr/local/bin/gosu && \
     gosu nobody true && \
 # complete gosu
     chmod u+x entrypoint.sh && \
 # download and configure jetty
-    curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.18.v20190429/jetty-distribution-9.4.18.v20190429.tar.gz -o /opt/jetty.tar.gz && \
+    curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.26.v20200117/jetty-distribution-9.4.26.v20200117.tar.gz -o /opt/jetty.tar.gz && \
     mkdir -p /opt/jetty && \
     tar -xvf /opt/jetty.tar.gz --strip-components=1 -C /opt/jetty && \
     rm -rf /opt/jetty.tar.gz /opt/jetty/demo-base && \
@@ -58,16 +58,16 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     # https://github.com/hazelcast/hazelcast-kubernetes
     for f in /opt/jetty/modules/session-store-hazelcast-*.mod; do \
       sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/dnsjava/dnsjava/2.1.9/dnsjava-2.1.9.jar|lib/hazelcast/dnsjava-2.1.9.jar' $f; \
-      sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/1.5.1/hazelcast-kubernetes-1.5.1.jar|lib/hazelcast/hazelcast-kubernetes-1.5.1.jar' $f; \
+      sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/2.0.1/hazelcast-kubernetes-2.0.1.jar|lib/hazelcast/hazelcast-kubernetes-2.0.1.jar' $f; \
     done && \
     # upgrade hazelcast
     for m in `grep -l hazelcast /opt/jetty/modules/*`; do \
-      sed -i 's;/hazelcast/[0-9.]\+/;/hazelcast/3.12.1/;g' $m; \
-      sed -i 's;/hazelcast-[0-9.]\+.jar;/hazelcast-3.12.1.jar;g' $m; \
-      sed -i 's;/hazelcast-client/[0-9.]\+/;/hazelcast-client/3.12.1/;g' $m; \
-      sed -i 's;/hazelcast-client-[0-9.]\+.jar;/hazelcast-client-3.12.1.jar;g' $m; \
-      sed -i 's;/hazelcast-all/[0-9.]\+/;/hazelcast-all/3.12.1/;g' $m; \
-      sed -i 's;/hazelcast-all-[0-9.]\+.jar;/hazelcast-all-3.12.1.jar;g' $m; \
+      sed -i 's;/hazelcast/[0-9.]\+/;/hazelcast/3.12.6/;g' $m; \
+      sed -i 's;/hazelcast-[0-9.]\+.jar;/hazelcast-3.12.6.jar;g' $m; \
+      sed -i 's;/hazelcast-client/[0-9.]\+/;/hazelcast-client/3.12.6/;g' $m; \
+      sed -i 's;/hazelcast-client-[0-9.]\+.jar;/hazelcast-client-3.12.6.jar;g' $m; \
+      sed -i 's;/hazelcast-all/[0-9.]\+/;/hazelcast-all/3.12.6/;g' $m; \
+      sed -i 's;/hazelcast-all-[0-9.]\+.jar;/hazelcast-all-3.12.6.jar;g' $m; \
     done && \
     #
     # set all modules' properties under ini-template section to be overridable by system properties
@@ -79,10 +79,10 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     sed -i 's/name="jetty.deploy.extractWars" default="true"/name="jetty.deploy.extractWars" default="false"/g' /opt/jetty/etc/jetty-deploy.xml && \
 # setup liquibase
     apk add --no-cache mariadb-connector-c-dev mysql-client xmlstarlet && \
-    wget https://github.com/liquibase/liquibase/releases/download/liquibase-parent-3.8.0/liquibase-3.8.0-bin.tar.gz -O /tmp/liquibase.tar.gz && \
+    wget https://github.com/liquibase/liquibase/releases/download/v3.8.6/liquibase-3.8.6.tar.gz -O /tmp/liquibase.tar.gz && \
     mkdir /opt/liquibase && tar -C /opt/liquibase -xvf /tmp/liquibase.tar.gz && \
     wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.48/mysql-connector-java-5.1.48.jar -O /opt/liquibase/mysql-connector-java-5.jar && \
-    wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.17/mysql-connector-java-8.0.17.jar -O /opt/liquibase/mysql-connector-java-8.jar && \
+    wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.19/mysql-connector-java-8.0.19.jar -O /opt/liquibase/mysql-connector-java-8.jar && \
     ln -s /opt/liquibase/liquibase /usr/local/bin && \
     rm -rf /tmp/liquibase.tar.gz && \
 # finalise and cleanup
