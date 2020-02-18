@@ -58,7 +58,7 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     # https://github.com/hazelcast/hazelcast-kubernetes
     for f in /opt/jetty/modules/session-store-hazelcast-*.mod; do \
       sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/dnsjava/dnsjava/2.1.9/dnsjava-2.1.9.jar|lib/hazelcast/dnsjava-2.1.9.jar' $f; \
-      sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/2.0.1/hazelcast-kubernetes-2.0.1.jar|lib/hazelcast/hazelcast-kubernetes-2.0.1.jar' $f; \
+      sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/1.5.3/hazelcast-kubernetes-1.5.3.jar|lib/hazelcast/hazelcast-kubernetes-1.5.1.jar' $f; \
     done && \
     # upgrade hazelcast
     for m in `grep -l hazelcast /opt/jetty/modules/*`; do \
