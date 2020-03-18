@@ -4,7 +4,7 @@ set -e
 cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 if [[ -f "$CA_CERTIFICATE" ]]; then
-	keytool -import -keystore ${JAVA_HOME}/jre/lib/security/cacerts -storepass changeit \
+	keytool -import -keystore ${JAVA_HOME}/lib/security/cacerts -storepass changeit \
 	    -file $CA_CERTIFICATE -alias custom-root-ca -noprompt >/dev/null
 fi
 
