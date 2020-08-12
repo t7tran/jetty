@@ -2,7 +2,8 @@ FROM openjdk:8-jdk-alpine
 
 MAINTAINER Tien Tran
 
-ENV TZ=Australia/Melbourne \
+ENV JETTY_VERSION=9.4.31.v20200723 \
+    TZ=Australia/Melbourne \
     STORE_PASS=changme \
     KEY_PASS=changme \
     WAITFOR_HOST= \
@@ -21,7 +22,7 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
 # complete gosu
     chmod u+x entrypoint.sh && \
 # download and configure jetty
-    curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/9.4.26.v20200117/jetty-distribution-9.4.26.v20200117.tar.gz -o /opt/jetty.tar.gz && \
+    curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${JETTY_VERSION}/jetty-distribution-${JETTY_VERSION}.tar.gz -o /opt/jetty.tar.gz && \
     mkdir -p /opt/jetty && \
     tar -xvf /opt/jetty.tar.gz --strip-components=1 -C /opt/jetty && \
     rm -rf /opt/jetty.tar.gz /opt/jetty/demo-base && \
