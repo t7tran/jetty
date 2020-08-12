@@ -61,7 +61,7 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     # https://github.com/hazelcast/hazelcast-kubernetes
     for f in /opt/jetty/modules/session-store-hazelcast-*.mod; do \
       sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/dnsjava/dnsjava/2.1.9/dnsjava-2.1.9.jar|lib/hazelcast/dnsjava-2.1.9.jar' $f; \
-      sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/1.5.3/hazelcast-kubernetes-1.5.3.jar|lib/hazelcast/hazelcast-kubernetes-1.5.1.jar' $f; \
+      sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/1.5.4/hazelcast-kubernetes-1.5.4.jar|lib/hazelcast/hazelcast-kubernetes-1.5.4.jar' $f; \
     done && \
     # upgrade hazelcast
     for m in `grep -l hazelcast /opt/jetty/modules/*`; do \
@@ -84,8 +84,8 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     apk add --no-cache mariadb-connector-c-dev mysql-client xmlstarlet && \
     wget https://github.com/liquibase/liquibase/releases/download/v${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}.tar.gz -O /tmp/liquibase.tar.gz && \
     mkdir /opt/liquibase && tar -C /opt/liquibase -xvf /tmp/liquibase.tar.gz && \
-    wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.48/mysql-connector-java-5.1.48.jar -O /opt/liquibase/mysql-connector-java-5.jar && \
-    wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.19/mysql-connector-java-8.0.19.jar -O /opt/liquibase/mysql-connector-java-8.jar && \
+    wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar -O /opt/liquibase/mysql-connector-java-5.jar && \
+    wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar -O /opt/liquibase/mysql-connector-java-8.jar && \
     ln -s /opt/liquibase/liquibase /usr/local/bin && \
     rm -rf /tmp/liquibase.tar.gz && \
 # finalise and cleanup
@@ -98,4 +98,4 @@ WORKDIR /opt/jetty
 EXPOSE 8080
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["gosu", "alpine", "bash", "-c", "java -jar start.jar jetty.home=$PWD"]
+CMD ["gosu", "alpine", "java -jar start.jar jetty.home=$PWD"]
