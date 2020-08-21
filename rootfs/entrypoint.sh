@@ -26,4 +26,6 @@ if [[ ! -z "$WAITFOR_HOST" && ! -z "$WAITFOR_PORT" ]]; then
 	for (( i=1; i<=${TIMEOUT}; i++ )); do nc -zw1 $WAITFOR_HOST $WAITFOR_PORT && break || sleep 1; done
 fi
 
+[[ -d $LIQUIBASE_CHANGESET_DIR ]] && migrate.sh $LIQUIBASE_CHANGESET_DIR $LIQUIBASE_TARGET_CHANGESET
+
 exec "$@"
