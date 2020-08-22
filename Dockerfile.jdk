@@ -23,10 +23,6 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     gosu nobody true && \
 # complete gosu
     chmod +x entrypoint.sh && \
-# setup for non-root execution
-    cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-    touch /keystore.jks /keystore.p12 && \
-    chmod 666 /etc/localtime /etc/timezone /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts /keystore.jks /keystore.p12 && \
 # download and configure jetty
     curl -fsSL https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${JETTY_VERSION}/jetty-distribution-${JETTY_VERSION}.tar.gz -o /opt/jetty.tar.gz && \
     mkdir -p /opt/jetty && \
@@ -92,6 +88,13 @@ RUN addgroup alpine && adduser -S -D -G alpine alpine && \
     wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar -O /opt/liquibase/mysql-connector-java-8.jar && \
     ln -s /opt/liquibase/liquibase /usr/local/bin && \
     rm -rf /tmp/liquibase.tar.gz && \
+# setup for non-root execution
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+    # empty keystore: https://stackoverflow.com/a/60226695
+    keytool -genkeypair -alias boguscert -storepass storePassword -keypass secretPassword -keystore /keystore.jks -dname "CN=Developer, OU=Department, O=Company, L=City, ST=State, C=CA" && \
+    keytool -delete -alias boguscert -storepass storePassword -keystore /keystore.jks && \
+    touch /keystore.p12 && \
+    chmod 666 /etc/localtime /etc/timezone /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts /keystore.jks /keystore.p12 && \
 # finalise and cleanup
     chown -R alpine:alpine /opt/jetty /opt/liquibase && \
     apk del tar curl dpkg && \
