@@ -27,6 +27,33 @@ if [[ ! -z "$WAITFOR_HOST" && ! -z "$WAITFOR_PORT" ]]; then
 	for (( i=1; i<=${TIMEOUT}; i++ )); do nc -zw1 $WAITFOR_HOST $WAITFOR_PORT && break || sleep 1; done
 fi
 
-[[ -d $LIQUIBASE_CHANGESET_DIR ]] && migrate.sh $LIQUIBASE_CHANGESET_DIR $LIQUIBASE_TARGET_CHANGESET
+var_dir() {
+  if [[ $1 -le 0 ]]; then
+    echo $LIQUIBASE_CHANGESET_DIR
+  else
+    var="LIQUIBASE_CHANGESET_DIR_$1"
+    echo ${!var}
+  fi
+}
+var_cs() {
+  if [[ $1 -le 0 ]]; then
+    echo $LIQUIBASE_TARGET_CHANGESET
+  else
+    var="LIQUIBASE_TARGET_CHANGESET_$1"
+    echo ${!var}
+  fi
+}
+
+for i in {0..9}; do
+  # bypass KEEP_RUNNING logic inside migrate.sh
+  keep_running=$keep_running$KEEP_RUNNING
+  KEEP_RUNNING=
+  [[ -d `var_dir $i` ]] && migrate.sh `var_dir $i` `var_cs $i`
+done
+
+# only keep running when being told and command is empty
+if [[ -n "$keep_running" && -z "$@" ]]; then
+  trap : TERM INT; tail -f /dev/null & wait
+fi
 
 exec "$@"
