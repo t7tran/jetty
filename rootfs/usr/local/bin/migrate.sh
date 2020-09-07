@@ -10,13 +10,12 @@ changeSetDir=`realpath $changeSetDir`
 applyingChangeSetId=$2
 
 if [[ -n "$LIQUIBASE_MYSQL_VER" && -f /opt/liquibase/mysql-connector-java-$LIQUIBASE_MYSQL_VER.jar ]]; then
-	# provide default driver if not specified
-	[[ -z "$LIQUIBASE_DB_DRIVER" && "$LIQUIBASE_MYSQL_VER" == "5" ]] && LIQUIBASE_DB_DRIVER=com.mysql.jdbc.Driver
-	[[ -z "$LIQUIBASE_DB_DRIVER" && "$LIQUIBASE_MYSQL_VER" == "8" ]] && LIQUIBASE_DB_DRIVER=com.mysql.cj.jdbc.Driver
-
 	find /opt/liquibase/lib -type f -name mysql-connector-java-\*.jar -exec mv {} /opt/liquibase \;
 	mv /opt/liquibase/mysql-connector-java-$LIQUIBASE_MYSQL_VER.jar /opt/liquibase/lib/
 fi
+# provide default driver if not specified
+[[ -z "$LIQUIBASE_DB_DRIVER" && "$LIQUIBASE_MYSQL_VER" == "5" ]] && LIQUIBASE_DB_DRIVER=com.mysql.jdbc.Driver
+[[ -z "$LIQUIBASE_DB_DRIVER" && "$LIQUIBASE_MYSQL_VER" == "8" ]] && LIQUIBASE_DB_DRIVER=com.mysql.cj.jdbc.Driver
 
 dbUrl="jdbc:mysql://${LIQUIBASE_DB_HOST?}/${LIQUIBASE_DB_NAME?}?${LIQUIBASE_DB_OPTIONS}"
 
