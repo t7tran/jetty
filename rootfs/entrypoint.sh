@@ -45,15 +45,21 @@ var_cs() {
 }
 
 for i in {0..9}; do
-  # bypass KEEP_RUNNING logic inside migrate.sh
-  keep_running=$keep_running$KEEP_RUNNING
-  KEEP_RUNNING=
-  [[ -d `var_dir $i` ]] && migrate.sh `var_dir $i` `var_cs $i`
+  if [[ -d `var_dir $i` ]]; then
+    # bypass KEEP_RUNNING logic inside migrate.sh
+    keep_running=$keep_running$KEEP_RUNNING
+    KEEP_RUNNING=
+    migrate.sh `var_dir $i` `var_cs $i`
+  fi
 done
 
 # only keep running when being told and command is empty
-if [[ -n "$keep_running" && -z "$@" ]]; then
-  trap : TERM INT; tail -f /dev/null & wait
+if [[ -n "$keep_running" ]]; then
+  if [[ -z "$@" ]]; then
+    trap : TERM INT; tail -f /dev/null & wait
+  else
+    KEEP_RUNNING=$keep_running
+  fi
 fi
 
 exec "$@"
