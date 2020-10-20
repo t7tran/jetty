@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
