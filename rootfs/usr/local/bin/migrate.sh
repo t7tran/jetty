@@ -9,7 +9,7 @@ changeSetDir=`realpath $changeSetDir`
 
 applyingChangeSetId=$2
 
-if [[ -n "$LIQUIBASE_MYSQL_VER" && -f /opt/liquibase/mysql-connector-java-$LIQUIBASE_MYSQL_VER.jar ]]; then
+if [[ -n "$LIQUIBASE_MYSQL_VER" && -f /opt/liquibase/mysql-connector-java-$LIQUIBASE_MYSQL_VER.jar && -w /opt/liquibase/lib ]]; then
 	find /opt/liquibase/lib -type f -name mysql-connector-java-\*.jar -exec mv {} /opt/liquibase \;
 	mv /opt/liquibase/mysql-connector-java-$LIQUIBASE_MYSQL_VER.jar /opt/liquibase/lib/
 fi
@@ -32,7 +32,7 @@ changeSetIds2Xmls.sh $changeSetDir
 # Find max changeset id from changelogs
 if [[ -z "$applyingChangeSetId" ]]; then
 	applyingChangeSetId=$(changeSetIds.sh $changeSetDir | sort -rV | head -1)
-elif [[ ! -f /tmp/changesets/$applyingChangeSetId.xml ]]; then
+elif [[ ! -f /opt/jetty/tmp/changesets/$applyingChangeSetId.xml ]]; then
 	echo "Requested change set $applyingChangeSetId to be applied not found."
 	exit 1
 fi
@@ -53,7 +53,7 @@ if [[ -n "$tableExists" ]]; then
 	dbMaxChangesetId=${dbMaxChangesetId:-0}
 fi
 
-if [[ "$dbMaxChangesetId" != "0" && ! -f /tmp/changesets/$dbMaxChangesetId.xml ]]; then
+if [[ "$dbMaxChangesetId" != "0" && ! -f /opt/jetty/tmp/changesets/$dbMaxChangesetId.xml ]]; then
 	echo Last applied change set $dbMaxChangesetId not found.
 	exit 1
 fi
@@ -61,13 +61,15 @@ fi
 # Compare changeset
 echo "The applying changeset is $applyingChangeSetId, the database changeset is $dbMaxChangesetId"
 
-masterFileLocation=/tmp/master.xml
+masterFileLocation=/opt/jetty/tmp/master.xml
+masterFileRelLocation=tmp/master.xml
 prepareMasterXml() {
 	# Create the master.xml file to be passed to liquibase
+	cd /opt/jetty
 	if [[ -z "$1" ]]; then
-		xmls=$(find /tmp/changesets -type f -name \*.xml 2>/dev/null | sort -V | xargs -n 1 -I {} echo '<include file="{}" />')
+		xmls=$(find tmp/changesets -type f -name \*.xml 2>/dev/null | sort -V | xargs -n 1 -I {} echo '<include file="{}" />')
 	else
-		xmls=$(find /tmp/changesets -type f -name \*.xml 2>/dev/null | sort -rV | sed -ne "/\/$1.xml/,\$p" | tac | xargs -n 1 -I {} echo '<include file="{}" />')
+		xmls=$(find tmp/changesets -type f -name \*.xml 2>/dev/null | sort -rV | sed -ne "/\/$1.xml/,\$p" | tac | xargs -n 1 -I {} echo '<include file="{}" />')
 	fi
 
 	if [[ -z "$xmls" ]]; then
@@ -91,7 +93,7 @@ newerChangeset() {
 }
 
 # Perform migration update or rollback
-liquibaseCommand="liquibase --driver=${LIQUIBASE_DB_DRIVER?} --url=$dbUrl --username=${LIQUIBASE_DB_USERNAME?} --password=${LIQUIBASE_DB_PASSWORD?} --changeLogFile=$masterFileLocation"
+liquibaseCommand="liquibase --driver=${LIQUIBASE_DB_DRIVER?} --url=$dbUrl --username=${LIQUIBASE_DB_USERNAME?} --password=${LIQUIBASE_DB_PASSWORD?} --changeLogFile=$masterFileRelLocation"
 logFilter() { 
 	grep -vE 'Starting|built|Datical|tagged'
 }

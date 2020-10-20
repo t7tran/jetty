@@ -4,7 +4,7 @@ MAINTAINER Tien Tran
 
 ENV JETTY_VERSION=9.4.32.v20200930 \
     GOSU_VERSION=1.12 \
-    LIQUIBASE_VERSION=3.10.2 \
+    LIQUIBASE_VERSION=4.1.1 \
     TZ=Australia/Melbourne \
     STORE_PASS=changme \
     KEY_PASS=changme \
