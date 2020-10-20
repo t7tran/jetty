@@ -2,7 +2,7 @@ FROM openjdk:8-jdk-alpine
 
 MAINTAINER Tien Tran
 
-ENV JETTY_VERSION=9.4.31.v20200723 \
+ENV JETTY_VERSION=9.4.32.v20200930 \
     GOSU_VERSION=1.12 \
     LIQUIBASE_VERSION=3.10.2 \
     TZ=Australia/Melbourne \
