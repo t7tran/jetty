@@ -112,12 +112,20 @@ rm -rf /tmp/liquibase.tar.gz
 #-------------------------------------------------------------------------
 # setup for non-root execution -------------------------------------------
 #-------------------------------------------------------------------------
-cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# note that Java default timezone relies on environment variable TZ
+mkdir /etc/time
+cp /usr/share/zoneinfo/$TZ /etc/time/localtime
+echo $TZ > /etc/time/timezone
+rm -rf /etc/{localtime,timezone}
+ln -s /etc/time/localtime /etc/localtime
+ln -s /etc/time/timezone /etc/timezone
+chmod 666 /etc/time/* /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts
+
 # empty keystore: https://stackoverflow.com/a/60226695
-keytool -genkeypair -alias boguscert -storepass storePassword -keypass secretPassword -keystore /keystore.jks -dname "CN=Developer, OU=Department, O=Company, L=City, ST=State, C=CA"
-keytool -delete -alias boguscert -storepass storePassword -keystore /keystore.jks
-touch /keystore.p12
-chmod 666 /etc/localtime /etc/timezone /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts /keystore.jks /keystore.p12
+#keytool -genkeypair -alias boguscert -storepass storePassword -keypass secretPassword -keystore /keystore.jks -dname "CN=Developer, OU=Department, O=Company, L=City, ST=State, C=CA"
+#keytool -delete -alias boguscert -storepass storePassword -keystore /keystore.jks
+#touch /keystore.p12
+#chmod 666 /etc/time/* /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts /keystore.jks /keystore.p12
 
 
 
