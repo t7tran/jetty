@@ -72,18 +72,18 @@ done
 # add hazelcast kubernetes discovery plugin
 # https://github.com/hazelcast/hazelcast-kubernetes
 for f in /opt/jetty/modules/session-store-hazelcast-*.mod; do
-  sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/dnsjava/dnsjava/${DNSJAVA_VERSION}/dnsjava-${DNSJAVA_VERSION}.jar|lib/hazelcast/dnsjava-${DNSJAVA_VERSION}.jar' $f
-  sed -ie '/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/${HAZELCAST_K8S_VERSION}/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar|lib/hazelcast/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar' $f
+  sed -ie "/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/dnsjava/dnsjava/${DNSJAVA_VERSION}/dnsjava-${DNSJAVA_VERSION}.jar|lib/hazelcast/dnsjava-${DNSJAVA_VERSION}.jar" $f
+  sed -ie "/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/${HAZELCAST_K8S_VERSION}/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar|lib/hazelcast/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar" $f
 done
 
 # upgrade hazelcast
 for m in `grep -l hazelcast /opt/jetty/modules/*`; do
-  sed -i 's;/hazelcast/[0-9.]\+/;/hazelcast/${HAZELCAST_VERSION}/;g' $m
-  sed -i 's;/hazelcast-[0-9.]\+.jar;/hazelcast-${HAZELCAST_VERSION}.jar;g' $m
-  sed -i 's;/hazelcast-client/[0-9.]\+/;/hazelcast-client/${HAZELCAST_VERSION}/;g' $m
-  sed -i 's;/hazelcast-client-[0-9.]\+.jar;/hazelcast-client-${HAZELCAST_VERSION}.jar;g' $m
-  sed -i 's;/hazelcast-all/[0-9.]\+/;/hazelcast-all/${HAZELCAST_VERSION}/;g' $m
-  sed -i 's;/hazelcast-all-[0-9.]\+.jar;/hazelcast-all-${HAZELCAST_VERSION}.jar;g' $m
+  sed -i "s;/hazelcast/[0-9.]\+/;/hazelcast/${HAZELCAST_VERSION}/;g" $m
+  sed -i "s;/hazelcast-[0-9.]\+.jar;/hazelcast-${HAZELCAST_VERSION}.jar;g" $m
+  sed -i "s;/hazelcast-client/[0-9.]\+/;/hazelcast-client/${HAZELCAST_VERSION}/;g" $m
+  sed -i "s;/hazelcast-client-[0-9.]\+.jar;/hazelcast-client-${HAZELCAST_VERSION}.jar;g" $m
+  sed -i "s;/hazelcast-all/[0-9.]\+/;/hazelcast-all/${HAZELCAST_VERSION}/;g" $m
+  sed -i "s;/hazelcast-all-[0-9.]\+.jar;/hazelcast-all-${HAZELCAST_VERSION}.jar;g" $m
 done
 
 # set all modules' properties under ini-template section to be overridable by system properties
