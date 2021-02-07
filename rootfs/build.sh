@@ -2,10 +2,10 @@
 
 # build variables
 GOSU_VERSION=1.12             # https://github.com/tianon/gosu/releases
-LIQUIBASE_VERSION=4.1.1       # https://github.com/liquibase/liquibase/releases
-HAZELCAST_VERSION=3.12.6      # https://repo1.maven.org/maven2/com/hazelcast/hazelcast
+LIQUIBASE_VERSION=4.2.2       # https://github.com/liquibase/liquibase/releases
+HAZELCAST_VERSION=3.12.11     # https://repo1.maven.org/maven2/com/hazelcast/hazelcast
 DNSJAVA_VERSION=2.1.9         # https://repo1.maven.org/maven2/dnsjava/dnsjava
-HAZELCAST_K8S_VERSION=1.5.4   # https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes
+HAZELCAST_K8S_VERSION=1.5.5   # https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes
 
 
 
