@@ -2,7 +2,7 @@ FROM eclipse-temurin:8u372-b07-jdk-alpine
 
 MAINTAINER Tien Tran
 
-ENV JETTY_VERSION=9.4.36.v20210114 \
+ENV JETTY_VERSION=9.4.51.v20230217 \
     TZ=Australia/Melbourne \
     STORE_PASS=changme \
     KEY_PASS=changme \
