@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # build variables
-GOSU_VERSION=1.12             # https://github.com/tianon/gosu/releases
 LIQUIBASE_VERSION=4.2.2       # https://github.com/liquibase/liquibase/releases
 HAZELCAST_VERSION=3.12.11     # https://repo1.maven.org/maven2/com/hazelcast/hazelcast
 DNSJAVA_VERSION=2.1.9         # https://repo1.maven.org/maven2/dnsjava/dnsjava
@@ -20,16 +19,6 @@ addgroup alpine && adduser -S -D -G alpine alpine
 # install timezone data and crucial tools --------------------------------
 #-------------------------------------------------------------------------
 apk --no-cache add coreutils tar tzdata curl dpkg openssl
-
-
-
-#-------------------------------------------------------------------------
-# install gosu -----------------------------------------------------------
-#-------------------------------------------------------------------------
-dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"
-curl -fsSL "https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-$dpkgArch" -o /usr/local/bin/gosu
-chmod +x /usr/local/bin/gosu
-gosu nobody true
 
 
 

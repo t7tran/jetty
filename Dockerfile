@@ -19,5 +19,7 @@ WORKDIR /opt/jetty
 
 EXPOSE 8080
 
+USER alpine
+
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["gosu", "alpine", "java -jar start.jar jetty.home=$PWD"]
+CMD ["java", "-jar", "start.jar", "jetty.home=/opt/jetty"]
