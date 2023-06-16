@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
+set -e
+
 # build variables
 LIQUIBASE_VERSION=4.2.2       # https://github.com/liquibase/liquibase/releases
-HAZELCAST_VERSION=3.12.11     # https://repo1.maven.org/maven2/com/hazelcast/hazelcast
 DNSJAVA_VERSION=2.1.9         # https://repo1.maven.org/maven2/dnsjava/dnsjava
 HAZELCAST_K8S_VERSION=1.5.5   # https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes
 
@@ -30,49 +31,22 @@ mkdir -p /opt/jetty
 tar -xvf /opt/jetty.tar.gz --strip-components=1 -C /opt/jetty
 rm -rf /opt/jetty.tar.gz /opt/jetty/demo-base
 
-# fix gibberish in module file
-sed -i 's|jar.*$|jar|g' /opt/jetty/modules/gcloud-datastore.mod
-
 # disable directory listing
 sed -in '$!N;s@dirAllowed.*\n.*true@dirAllowed</param-name><param-value>false@;P;D' /opt/jetty/etc/webdefault.xml
 
-# fix maven urls resolved to outdated central.maven.org
-for f in `ls -1 /opt/jetty/modules/*.mod`; do
-  for u in `grep -oE 'maven://[^|]+' $f`; do
-    path=`echo $u | cut -d '/' -f 3`
-    path=${path//./\/}
-    artifact=`echo $u | cut -d '/' -f 4`
-    version=`echo $u | cut -d '/' -f 5`
-    regex="s|$u|https://repo1.maven.org/maven2/$path/$artifact/$version/$artifact-$version.jar|g"
-    sed -i $regex $f
-  done
-done
-
 # patch session-store-hazelcast configurations
-sed -i 's|</New>|<Set name="configurationLocation"><Property name="jetty.session.hazelcast.configurationLocation" /></Set></New>|g' /opt/jetty/etc/sessions/hazelcast/default.xml
-sed -i 's|</New>|<Set name="configurationLocation"><Property name="jetty.session.hazelcast.configurationLocation" /></Set></New>|g' /opt/jetty/etc/sessions/hazelcast/remote.xml
 for f in `grep -l 'jetty.session.hazelcast.configurationLocation' /opt/jetty/modules/*embedded*`; do
-  sed -i 's|^#jetty.session.hazelcast.configurationLocation=$|jetty.session.hazelcast.configurationLocation=/opt/jetty/etc/sessions/hazelcast/server-default.xml|g' $f
+  sed -i 's|^#jetty.session.hazelcast.configurationLocation.*$|jetty.session.hazelcast.configurationLocation=/opt/jetty/etc/sessions/hazelcast/server-default.xml|g' $f
 done
 for f in `grep -l 'jetty.session.hazelcast.configurationLocation' /opt/jetty/modules/*remote*`; do
-  sed -i 's|^#jetty.session.hazelcast.configurationLocation=$|jetty.session.hazelcast.configurationLocation=/opt/jetty/etc/sessions/hazelcast/client-default.xml|g' $f
+  sed -i 's|^#jetty.session.hazelcast.configurationLocation.*$|jetty.session.hazelcast.configurationLocation=/opt/jetty/etc/sessions/hazelcast/client-default.xml|g' $f
 done
 
 # add hazelcast kubernetes discovery plugin
 # https://github.com/hazelcast/hazelcast-kubernetes
 for f in /opt/jetty/modules/session-store-hazelcast-*.mod; do
-  sed -ie "/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/dnsjava/dnsjava/${DNSJAVA_VERSION}/dnsjava-${DNSJAVA_VERSION}.jar|lib/hazelcast/dnsjava-${DNSJAVA_VERSION}.jar" $f
-  sed -ie "/hazelcast-[0-9.]\+.jar/a\\https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes/${HAZELCAST_K8S_VERSION}/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar|lib/hazelcast/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar" $f
-done
-
-# upgrade hazelcast
-for m in `grep -l hazelcast /opt/jetty/modules/*`; do
-  sed -i "s;/hazelcast/[0-9.]\+/;/hazelcast/${HAZELCAST_VERSION}/;g" $m
-  sed -i "s;/hazelcast-[0-9.]\+.jar;/hazelcast-${HAZELCAST_VERSION}.jar;g" $m
-  sed -i "s;/hazelcast-client/[0-9.]\+/;/hazelcast-client/${HAZELCAST_VERSION}/;g" $m
-  sed -i "s;/hazelcast-client-[0-9.]\+.jar;/hazelcast-client-${HAZELCAST_VERSION}.jar;g" $m
-  sed -i "s;/hazelcast-all/[0-9.]\+/;/hazelcast-all/${HAZELCAST_VERSION}/;g" $m
-  sed -i "s;/hazelcast-all-[0-9.]\+.jar;/hazelcast-all-${HAZELCAST_VERSION}.jar;g" $m
+  sed -ie "/\\[files\\]/a\\maven://dnsjava/dnsjava/${DNSJAVA_VERSION}/dnsjava-${DNSJAVA_VERSION}.jar|lib/hazelcast/dnsjava-${DNSJAVA_VERSION}.jar" $f
+  sed -ie "/\\[files\\]/a\\maven://com.hazelcast/hazelcast-kubernetes/${HAZELCAST_K8S_VERSION}/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar|lib/hazelcast/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar" $f
 done
 
 # set all modules' properties under ini-template section to be overridable by system properties
@@ -92,7 +66,7 @@ apk add --no-cache mariadb-connector-c-dev mysql-client xmlstarlet
 wget https://github.com/liquibase/liquibase/releases/download/v${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}.tar.gz -O /tmp/liquibase.tar.gz
 mkdir /opt/liquibase && tar -C /opt/liquibase -xvf /tmp/liquibase.tar.gz
 wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar -O /opt/liquibase/mysql-connector-java-5.jar
-wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.22/mysql-connector-java-8.0.22.jar -O /opt/liquibase/mysql-connector-java-8.jar
+wget https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar   -O /opt/liquibase/mysql-connector-java-8.jar
 ln -s /opt/liquibase/liquibase /usr/local/bin
 rm -rf /tmp/liquibase.tar.gz
 
@@ -108,7 +82,7 @@ echo $TZ > /etc/time/timezone
 rm -rf /etc/{localtime,timezone}
 ln -s /etc/time/localtime /etc/localtime
 ln -s /etc/time/timezone /etc/timezone
-chmod 666 /etc/time/* /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts
+chmod 666 /etc/time/* /opt/java/openjdk/lib/security/cacerts
 
 # empty keystore: https://stackoverflow.com/a/60226695
 #keytool -genkeypair -alias boguscert -storepass storePassword -keypass secretPassword -keystore /keystore.jks -dname "CN=Developer, OU=Department, O=Company, L=City, ST=State, C=CA"
@@ -121,7 +95,7 @@ chmod 666 /etc/time/* /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts
 #-------------------------------------------------------------------------
 # finalise and cleanup ---------------------------------------------------
 #-------------------------------------------------------------------------
-chmod +x entrypoint.sh
+chmod +x /entrypoint.sh
 chown -R alpine:alpine /opt/jetty /opt/liquibase
 apk del tar curl dpkg
 rm -rf /apk /tmp/* /var/cache/apk/*
