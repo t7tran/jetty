@@ -45,8 +45,8 @@ done
 # add hazelcast kubernetes discovery plugin
 # https://github.com/hazelcast/hazelcast-kubernetes
 for f in /opt/jetty/modules/session-store-hazelcast-*.mod; do
-  sed -ie "/\\[files\\]/a\\maven://dnsjava/dnsjava/${DNSJAVA_VERSION}/dnsjava-${DNSJAVA_VERSION}.jar|lib/hazelcast/dnsjava-${DNSJAVA_VERSION}.jar" $f
-  sed -ie "/\\[files\\]/a\\maven://com.hazelcast/hazelcast-kubernetes/${HAZELCAST_K8S_VERSION}/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar|lib/hazelcast/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar" $f
+  sed -ie "/\\[files\\]/a\\maven://dnsjava/dnsjava/${DNSJAVA_VERSION}|lib/hazelcast/dnsjava-${DNSJAVA_VERSION}.jar" $f
+  sed -ie "/\\[files\\]/a\\maven://com.hazelcast/hazelcast-kubernetes/${HAZELCAST_K8S_VERSION}|lib/hazelcast/hazelcast-kubernetes-${HAZELCAST_K8S_VERSION}.jar" $f
 done
 
 # set all modules' properties under ini-template section to be overridable by system properties
