@@ -84,7 +84,7 @@ echo $TZ > /etc/time/timezone
 rm -rf /etc/{localtime,timezone}
 ln -s /etc/time/localtime /etc/localtime
 ln -s /etc/time/timezone /etc/timezone
-chmod 666 /etc/time/* /opt/java/openjdk/lib/security/cacerts
+chmod 666 /etc/time/* /usr/lib/jvm/default-jvm/jre/lib/security/cacerts
 
 # empty keystore: https://stackoverflow.com/a/60226695
 #keytool -genkeypair -alias boguscert -storepass storePassword -keypass secretPassword -keystore /keystore.jks -dname "CN=Developer, OU=Department, O=Company, L=City, ST=State, C=CA"

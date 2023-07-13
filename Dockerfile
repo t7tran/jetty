@@ -1,4 +1,4 @@
-FROM eclipse-temurin:8u372-b07-jre-alpine
+FROM amazoncorretto:8u372-alpine-jre
 
 MAINTAINER Tien Tran
 
