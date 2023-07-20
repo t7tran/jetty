@@ -37,8 +37,8 @@ if [[ -f "$CERTIFICATE" && -f "$CERTIFICATE_KEY" && -n "$STORE_PASS" && -n "$KEY
 	rm -rf ${keystore}.p12
 fi
 
-if [[ ! -z "$WAITFOR_HOST" && ! -z "$WAITFOR_PORT" ]]; then
-	for (( i=1; i<=${TIMEOUT}; i++ )); do nc -zw1 $WAITFOR_HOST $WAITFOR_PORT && break || sleep 1; done
+if [[ -n "$WAITFOR_HOST" && -n "$WAITFOR_PORT" ]]; then
+	for (( i=1; i<=${TIMEOUT:-30}; i++ )); do nc -zw1 $WAITFOR_HOST $WAITFOR_PORT && break || sleep 1; done
 fi
 
 var_dir() {
