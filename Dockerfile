@@ -2,7 +2,7 @@ FROM amazoncorretto:8u382-alpine-jre
 
 MAINTAINER Tien Tran
 
-ENV JETTY_VERSION=9.4.51.v20230217 \
+ENV JETTY_VERSION=9.4.52.v20230823 \
     TZ=Australia/Melbourne \
     STORE_PASS=changme \
     KEY_PASS=changme \
