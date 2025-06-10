@@ -37,7 +37,7 @@ elif [[ ! -f /opt/jetty/tmp/changesets/$applyingChangeSetId.xml ]]; then
 	exit 1
 fi
 
-mysql="mariadb -u ${LIQUIBASE_DB_USERNAME?} --database ${LIQUIBASE_DB_NAME?} -h ${LIQUIBASE_DB_HOST?} -N -s ${LIQUIBASE_DB_OPTS}"
+mysql="mariadb -u ${LIQUIBASE_DB_USERNAME?} --database ${LIQUIBASE_DB_NAME?} -h ${LIQUIBASE_DB_HOST?} -N -s ${LIQUIBASE_DB_CLI_OPTS}"
 
 tableExists=$(MYSQL_PWD=${LIQUIBASE_DB_PASSWORD?} $mysql -e 'show tables' | grep -v DATABASECHANGELOG || true)
 if [[ -z "$tableExists" && "${LIQUIBASE_SKIP_EMPTY_DB:-true}" == "true" ]]; then
