@@ -1,4 +1,4 @@
-FROM amazoncorretto:8u392-alpine-jre
+FROM amazoncorretto:8u452-alpine-jre
 
 MAINTAINER Tien Tran
 
