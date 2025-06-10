@@ -68,7 +68,7 @@ apk add --no-cache mariadb-connector-c-dev mysql-client xmlstarlet
 wget https://github.com/liquibase/liquibase/releases/download/v${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}.tar.gz -O /tmp/liquibase.tar.gz
 mkdir /opt/liquibase && tar -C /opt/liquibase -xvf /tmp/liquibase.tar.gz
 wget https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar -O /opt/liquibase/mysql-connector-java-5.jar
-wget https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar   -O /opt/liquibase/mysql-connector-java-8.jar
+wget https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.4.0/mysql-connector-j-8.4.0.jar     -O /opt/liquibase/mysql-connector-java-8.jar
 ln -s /opt/liquibase/liquibase /usr/local/bin
 rm -rf /tmp/liquibase.tar.gz
 
