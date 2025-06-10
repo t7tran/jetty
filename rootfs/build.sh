@@ -3,7 +3,7 @@
 set -e
 
 # build variables
-LIQUIBASE_VERSION=4.2.2       # https://github.com/liquibase/liquibase/releases
+LIQUIBASE_VERSION=4.3.1       # https://github.com/liquibase/liquibase/releases
 DNSJAVA_VERSION=2.1.9         # https://repo1.maven.org/maven2/dnsjava/dnsjava
 HAZELCAST_K8S_VERSION=1.5.5   # https://repo1.maven.org/maven2/com/hazelcast/hazelcast-kubernetes
 
